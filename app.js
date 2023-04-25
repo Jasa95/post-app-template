@@ -20,7 +20,7 @@ function initApp() {
 function showCreatePostDialog() {
     console.log("Create New Post clicked!");
     document.querySelector("#dialog-createPost").showModal();
-    document.querySelector("#btn-create-post").addEventListener("submit", createPostClicked);
+    document.querySelector("#btn-create-post").addEventListener("click", createPostClicked);
 }
 
 // ============== posts ============== //
