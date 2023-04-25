@@ -1,7 +1,7 @@
 "use strict";
 
 // ============== global variables ============== //
-const endpoint = "";
+const endpoint = "https://rest-ovelser-default-rtdb.europe-west1.firebasedatabase.app";
 let posts;
 
 // ============== load and init app ============== //
@@ -19,9 +19,9 @@ function initApp() {
 
 function showCreatePostDialog() {
     console.log("Create New Post clicked!");
+    document.querySelector("#dialog-createPost").showModal();
+    document.querySelector("#btn-create-post").addEventListener("submit", createPostClicked);
 }
-
-// todo
 
 // ============== posts ============== //
 
@@ -49,7 +49,7 @@ function showPosts(listOfPosts) {
 function showPost(postObject) {
     const html = /*html*/ `
         <article class="grid-item">
-            <img src="${postObject.image}" />
+            <img src=${postObject.image} />
             <h3>${postObject.title}</h3>
             <p>${postObject.body}</p>
             <div class="btns">
@@ -80,6 +80,22 @@ function showPost(postObject) {
 // Create a new post - HTTP Method: POST
 async function createPost(title, body, image) {
     // create new post object
+    const newPost = {
+        title: title,
+        body: body,
+        image: image
+    };
+    const json = JSON.stringify(newPost);
+    const response = await fetch(`${endpoint}/posts.json`, 
+				{ 
+						method: "POST", 
+						body: json 
+				}
+    );
+    if (response.ok) {
+        console.log("ok");
+        updatePostsGrid();
+    };
     // convert the JS object to JSON string
     // POST fetch request with JSON in the body
     // check if response is ok - if the response is successful
@@ -115,4 +131,17 @@ function prepareData(dataObject) {
         array.push(object); // add the object to array
     }
     return array; // return array back to "the caller"
+}
+
+function createPostClicked(event) {
+    event.preventDefault();
+    const form = this;
+    const title = form.title_newPost.value;
+    const body = form.body_newPost.value;
+    const image = form.image_newPost.value;
+    
+    createPost(title, body, image);
+    form.reset();
+    document.querySelector("#dialog-create-post").close();
+    console.log(form, title);
 }
